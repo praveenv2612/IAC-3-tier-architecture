@@ -52,11 +52,11 @@
     },
     "db_instance_class": {
       "type": "string",
-      "default": "db.t3.medium"
+      "default": "db.t3.micro"
     },
     "db_allocated_storage": {
       "type": "number",
-      "default": 50
+      "default": 20
     },
     "db_name": {
       "type": "string",
