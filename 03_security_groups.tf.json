@@ -1,0 +1,113 @@
+{
+  "resource": {
+    "aws_security_group": {
+      "alb": {
+        "name": "${var.project_name}-alb-sg",
+        "description": "Allow HTTP/HTTPS from internet",
+        "vpc_id": "${aws_vpc.main.id}",
+        "ingress": [
+          {
+            "description": "HTTP",
+            "from_port": 80,
+            "to_port": 80,
+            "protocol": "tcp",
+            "cidr_blocks": ["0.0.0.0/0"],
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "security_groups": [],
+            "self": false
+          },
+          {
+            "description": "HTTPS",
+            "from_port": 443,
+            "to_port": 443,
+            "protocol": "tcp",
+            "cidr_blocks": ["0.0.0.0/0"],
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "security_groups": [],
+            "self": false
+          }
+        ],
+        "egress": [
+          {
+            "from_port": 0,
+            "to_port": 0,
+            "protocol": "-1",
+            "cidr_blocks": ["0.0.0.0/0"],
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "security_groups": [],
+            "self": false,
+            "description": "All outbound"
+          }
+        ],
+        "tags": { "Name": "${var.project_name}-alb-sg" }
+      },
+      "app": {
+        "name": "${var.project_name}-app-sg",
+        "description": "Allow traffic from ALB only",
+        "vpc_id": "${aws_vpc.main.id}",
+        "ingress": [
+          {
+            "description": "HTTP from ALB",
+            "from_port": 80,
+            "to_port": 80,
+            "protocol": "tcp",
+            "security_groups": ["${aws_security_group.alb.id}"],
+            "cidr_blocks": [],
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "self": false
+          }
+        ],
+        "egress": [
+          {
+            "from_port": 0,
+            "to_port": 0,
+            "protocol": "-1",
+            "cidr_blocks": ["0.0.0.0/0"],
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "security_groups": [],
+            "self": false,
+            "description": "All outbound"
+          }
+        ],
+        "tags": { "Name": "${var.project_name}-app-sg" }
+      },
+      "db": {
+        "name": "${var.project_name}-db-sg",
+        "description": "Allow DB traffic from app tier only",
+        "vpc_id": "${aws_vpc.main.id}",
+        "ingress": [
+          {
+            "description": "DB from app tier",
+            "from_port": 3306,
+            "to_port": 3306,
+            "protocol": "tcp",
+            "security_groups": ["${aws_security_group.app.id}"],
+            "cidr_blocks": [],
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "self": false
+          }
+        ],
+        "egress": [
+          {
+            "from_port": 0,
+            "to_port": 0,
+            "protocol": "-1",
+            "cidr_blocks": ["0.0.0.0/0"],
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "security_groups": [],
+            "self": false,
+            "description": "All outbound"
+          }
+        ],
+        "tags": { "Name": "${var.project_name}-db-sg" }
+      }
+    }
+  }
+}

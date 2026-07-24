@@ -1,0 +1,20 @@
+{
+  "output": {
+    "vpc_id": {
+      "value": "${aws_vpc.main.id}"
+    },
+    "alb_dns_name": {
+      "value": "${aws_lb.main.dns_name}"
+    },
+    "cloudfront_domain_name": {
+      "value": "${aws_cloudfront_distribution.main.domain_name}"
+    },
+    "rds_endpoint": {
+      "value": "${aws_db_instance.main.endpoint}",
+      "sensitive": true
+    },
+    "route53_record": {
+      "value": "${aws_route53_record.app.fqdn}"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "resource": {
+    "aws_cloudwatch_log_group": {
+      "app": {
+        "name": "/${var.project_name}/app",
+        "retention_in_days": 30
+      }
+    },
+
+    "aws_cloudwatch_metric_alarm": {
+      "asg_high_cpu": {
+        "alarm_name": "${var.project_name}-asg-high-cpu",
+        "comparison_operator": "GreaterThanThreshold",
+        "evaluation_periods": 2,
+        "metric_name": "CPUUtilization",
+        "namespace": "AWS/EC2",
+        "period": 300,
+        "statistic": "Average",
+        "threshold": 80,
+        "alarm_description": "Triggers when app tier average CPU exceeds 80%",
+        "dimensions": { "AutoScalingGroupName": "${aws_autoscaling_group.app.name}" }
+      },
+      "rds_high_cpu": {
+        "alarm_name": "${var.project_name}-rds-high-cpu",
+        "comparison_operator": "GreaterThanThreshold",
+        "evaluation_periods": 2,
+        "metric_name": "CPUUtilization",
+        "namespace": "AWS/RDS",
+        "period": 300,
+        "statistic": "Average",
+        "threshold": 80,
+        "alarm_description": "Triggers when RDS CPU exceeds 80%",
+        "dimensions": { "DBInstanceIdentifier": "${aws_db_instance.main.id}" }
+      },
+      "alb_5xx": {
+        "alarm_name": "${var.project_name}-alb-5xx-errors",
+        "comparison_operator": "GreaterThanThreshold",
+        "evaluation_periods": 1,
+        "metric_name": "HTTPCode_ELB_5XX_Count",
+        "namespace": "AWS/ApplicationELB",
+        "period": 300,
+        "statistic": "Sum",
+        "threshold": 10,
+        "alarm_description": "Triggers when ALB returns more than 10 5xx errors in 5 min",
+        "dimensions": { "LoadBalancer": "${aws_lb.main.arn_suffix}" }
+      }
+    },
+
+    "aws_cloudwatch_dashboard": {
+      "main": {
+        "dashboard_name": "${var.project_name}-dashboard",
+        "dashboard_body": "${jsonencode({\n  widgets = [\n    {\n      type = \"metric\",\n      x = 0, y = 0, width = 12, height = 6,\n      properties = {\n        metrics = [[\"AWS/ApplicationELB\", \"RequestCount\", \"LoadBalancer\", aws_lb.main.arn_suffix]],\n        period = 300, stat = \"Sum\", region = var.aws_region, title = \"ALB Request Count\"\n      }\n    },\n    {\n      type = \"metric\",\n      x = 12, y = 0, width = 12, height = 6,\n      properties = {\n        metrics = [[\"AWS/EC2\", \"CPUUtilization\", \"AutoScalingGroupName\", aws_autoscaling_group.app.name]],\n        period = 300, stat = \"Average\", region = var.aws_region, title = \"App Tier CPU\"\n      }\n    },\n    {\n      type = \"metric\",\n      x = 0, y = 6, width = 12, height = 6,\n      properties = {\n        metrics = [[\"AWS/RDS\", \"CPUUtilization\", \"DBInstanceIdentifier\", aws_db_instance.main.id]],\n        period = 300, stat = \"Average\", region = var.aws_region, title = \"RDS CPU\"\n      }\n    }\n  ]\n})}"
+      }
+    }
+  }
+}

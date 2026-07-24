@@ -1,0 +1,79 @@
+{
+  "variable": {
+    "aws_region": {
+      "type": "string",
+      "default": "ap-south-1",
+      "description": "Primary AWS region for the VPC and resources (Mumbai)"
+    },
+    "project_name": {
+      "type": "string",
+      "default": "three-tier-app",
+      "description": "Prefix used to name/tag all resources"
+    },
+    "vpc_cidr": {
+      "type": "string",
+      "default": "10.0.0.0/16"
+    },
+    "public_subnet_cidrs": {
+      "type": "list(string)",
+      "default": ["10.0.1.0/24", "10.0.2.0/24"]
+    },
+    "app_subnet_cidrs": {
+      "type": "list(string)",
+      "default": ["10.0.11.0/24", "10.0.12.0/24"]
+    },
+    "data_subnet_cidrs": {
+      "type": "list(string)",
+      "default": ["10.0.21.0/24", "10.0.22.0/24"]
+    },
+    "instance_type": {
+      "type": "string",
+      "default": "t3.micro"
+    },
+    "asg_min_size": {
+      "type": "number",
+      "default": 2
+    },
+    "asg_max_size": {
+      "type": "number",
+      "default": 4
+    },
+    "asg_desired_capacity": {
+      "type": "number",
+      "default": 2
+    },
+    "db_engine": {
+      "type": "string",
+      "default": "mysql"
+    },
+    "db_engine_version": {
+      "type": "string",
+      "default": "8.0"
+    },
+    "db_instance_class": {
+      "type": "string",
+      "default": "db.t3.medium"
+    },
+    "db_allocated_storage": {
+      "type": "number",
+      "default": 50
+    },
+    "db_name": {
+      "type": "string",
+      "default": "appdb"
+    },
+    "db_username": {
+      "type": "string",
+      "default": "admin"
+    },
+    "db_password": {
+      "type": "string",
+      "sensitive": true,
+      "description": "Set via terraform.tfvars or TF_VAR_db_password, no default on purpose"
+    },
+    "domain_name": {
+      "type": "string",
+      "description": "Root domain managed in Route 53, e.g. example.com"
+    }
+  }
+}
